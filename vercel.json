@@ -1,9 +1,8 @@
 {
   "version": 2,
-  "buildCommand": "cd ai-chat-hub && npm install --force && npm run build",
+  "buildCommand": "cd ai-chat-hub && npm ci && npm run build",
   "outputDirectory": "ai-chat-hub/dist",
-  "routes": [
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
