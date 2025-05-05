@@ -1,17 +1,9 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "ai-chat-hub/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
-  ],
-  "buildCommand": "cd ai-chat-hub && npm install && npm run build",
-  "outputDirectory": "ai-chat-hub/dist"
+  "buildCommand": "cd ai-chat-hub && npm install --force && npm run build",
+  "outputDirectory": "ai-chat-hub/dist",
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
 }
