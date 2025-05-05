@@ -285,52 +285,8 @@ const LandingPage = () => {
                 Start Chatting with Billi
               </Button>
             </MotionBox>
-            
-            {/* <MotionBox
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                size="lg"
-                variant="outline"
-                borderWidth="2px"
-                borderColor={useColorModeValue('billi.500', 'billi.400')}
-                color={useColorModeValue('billi.500', 'billi.400')}
-                _hover={{
-                  bg: useColorModeValue('billi.50', 'rgba(49, 130, 206, 0.1)')
-                }}
-                leftIcon={<BiRocket />}
-              >
-                About Billi
-              </Button>
-            </MotionBox> */}
           </VStack>
-
-          {/* Remove the Personal Touch Section */}
           
-          {/* Testimonials Section */}
-          <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={8} w="full">
-            {testimonials.map((testimonial, index) => (
-              <MotionBox
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 * index }}
-                variant="glass"
-                p={6}
-                borderRadius="xl"
-              >
-                <HStack spacing={4} mb={4}>
-                  <Avatar src={testimonial.avatar} name={testimonial.name} />
-                  <Box>
-                    <Text fontWeight="bold">{testimonial.name}</Text>
-                    <Text fontSize="sm" color="gray.500">{testimonial.role}</Text>
-                  </Box>
-                </HStack>
-                <Text>{testimonial.content}</Text>
-              </MotionBox>
-            ))}
-          </Grid>
 
           {/* Footer */}
           <Box as="footer" w="full" py={10}>
