@@ -9,15 +9,12 @@
       }
     }
   ],
-  "routes": [
+  "rewrites": [
     {
-      "src": "/[^.]+",
-      "dest": "ai-chat-hub/index.html",
-      "status": 200
-    },
-    {
-      "src": "/(.+)",
-      "dest": "ai-chat-hub/$1"
+      "source": "/(.*)",
+      "destination": "/ai-chat-hub/index.html"
     }
-  ]
+  ],
+  "buildCommand": "cd ai-chat-hub && npm install && npm run build",
+  "outputDirectory": "ai-chat-hub/dist"
 }
