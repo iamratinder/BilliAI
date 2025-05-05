@@ -1,6 +1,0 @@
-{
-  "private": true,
-  "scripts": {
-    "build": "cd ai-chat-hub && npm install && npm run build"
-  }
-}

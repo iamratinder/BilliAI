@@ -12,6 +12,17 @@
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ],
-  "buildCommand": "npm install && npm run build",
-  "outputDirectory": "dist"
+  "buildCommand": "cd ai-chat-hub && npm install && npm run build",
+  "outputDirectory": "ai-chat-hub/dist",
+  "framework": "vite",
+  "routes": [
+    { 
+      "handle": "filesystem"
+    },
+    {
+      "src": "/[^.]+",
+      "dest": "/",
+      "status": 200
+    }
+  ]
 }
