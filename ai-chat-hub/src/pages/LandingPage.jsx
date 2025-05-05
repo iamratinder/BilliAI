@@ -291,7 +291,7 @@ const LandingPage = () => {
               </Button>
             </MotionBox>
             
-            <MotionBox
+            {/* <MotionBox
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
@@ -308,7 +308,7 @@ const LandingPage = () => {
               >
                 About Billi
               </Button>
-            </MotionBox>
+            </MotionBox> */}
           </HStack>
 
           {/* Testimonials Section */}
