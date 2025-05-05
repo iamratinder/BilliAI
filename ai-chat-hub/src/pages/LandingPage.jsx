@@ -146,13 +146,14 @@ const ChatPreview = () => {
 };
 
 const LandingPage = () => {
+  // State hooks
   const [isLoading, setIsLoading] = useState(true);
+
+  // Context hooks
   const navigate = useNavigate();
-  const bgColor = useColorModeValue('gray.50', 'gray.900');
-  const cardBg = useColorModeValue('white', 'gray.800');
-  const textColor = useColorModeValue('gray.800', 'white');
   const { colorMode, toggleColorMode } = useColorMode();
 
+  // Effects
   useEffect(() => {
     // Simulate loading time
     const timer = setTimeout(() => {
@@ -160,6 +161,10 @@ const LandingPage = () => {
     }, 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  const bgColor = useColorModeValue('gray.50', 'gray.900');
+  const cardBg = useColorModeValue('white', 'gray.800');
+  const textColor = useColorModeValue('gray.800', 'white');
 
   if (isLoading) {
     return (

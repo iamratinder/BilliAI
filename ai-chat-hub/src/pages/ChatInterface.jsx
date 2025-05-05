@@ -17,6 +17,7 @@ import {
   DrawerBody,
   useDisclosure,
   useColorMode,
+  Spinner,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { ChevronLeftIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
@@ -27,6 +28,158 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 const MotionBox = motion(Box);
+
+const Sidebar = ({ selectedAI, setSelectedAI, isMobile, onClose, borderColor }) => {
+  const useColorValue = useColorModeValue('white', 'gray.800');
+  
+  return (
+    <VStack 
+      spacing={4} 
+      align="stretch" 
+      w="full" 
+      p={4}
+      bg={useColorValue}
+      borderColor={borderColor}
+      as={motion.div}
+      initial={{ x: -240 }}
+      animate={{ x: 0 }}
+      transition={{ type: "tween", duration: 0.6, ease: "easeOut" }}
+      >
+      {['assistant', 'creative', 'technical', 'friendly'].map((ai) => (
+        <Button
+          key={ai}
+          variant={selectedAI === ai ? 'solid' : 'ghost'}
+          onClick={() => {
+            setSelectedAI(ai);
+            if (isMobile) onClose();
+          }}
+          colorScheme="blue"
+          w="full"
+          justifyContent="flex-start"
+          px={4}
+          bg={selectedAI === ai 
+            ? useColorModeValue('blue.500', 'blue.200')
+            : 'transparent'
+          }
+          color={selectedAI === ai 
+            ? useColorModeValue('white', 'gray.800')
+            : useColorModeValue('gray.800', 'white')
+          }
+          _hover={{
+            bg: useColorModeValue(
+              selectedAI === ai ? 'blue.600' : 'blue.50',
+              selectedAI === ai ? 'blue.300' : 'blue.700'
+            )
+          }}
+        >
+          {ai.charAt(0).toUpperCase() + ai.slice(1)}
+        </Button>
+      ))}
+    </VStack>
+  );
+};
+
+const BilliLogo = ({ navigate }) => (
+  <Text
+    as="button"
+    fontSize="2xl"
+    fontWeight="900"
+    bgGradient="linear(to-r, blue.400, teal.400)"
+    bgClip="text"
+    onClick={() => navigate('/')}
+    _hover={{
+      transform: 'scale(1.05)',
+      textShadow: '0 0 20px rgba(66, 153, 225, 0.3)'
+    }}
+    transition="all 0.3s ease"
+    display="flex"
+    alignItems="center"
+  >
+    Billi
+  </Text>
+);
+
+const bounceVariant = {
+  animate: (i) => ({
+    y: [0, -6, 0],
+    transition: {
+      duration: 0.6,
+      repeat: Infinity,
+      repeatType: "loop",
+      ease: "easeInOut",
+      delay: i * 0.2, // This creates the wave
+    },
+  }),
+};
+
+const TypingIndicator = () => {
+  return (
+    <HStack spacing={2}>
+      {[0, 1, 2].map((index) => (
+        <Box
+          key={index}
+          as={motion.div}
+          variants={bounceVariant}
+          animate="animate"
+          custom={index}
+          h="6px"
+          w="6px"
+          borderRadius="full"
+          bg="blue.500"
+        />
+      ))}
+    </HStack>
+  );
+};
+
+const MessageContent = ({ content }) => {
+  return (
+    <ReactMarkdown
+      children={content}
+      components={{
+        code({ node, inline, className, children, ...props }) {
+          const match = /language-(\w+)/.exec(className || '');
+          return !inline && match ? (
+            <Box my={2} borderRadius="md" overflow="hidden">
+              <SyntaxHighlighter
+                style={oneDark}
+                language={match[1]}
+                PreTag="div"
+                customStyle={{
+                  margin: 0,
+                  borderRadius: '0.375rem',
+                }}
+                {...props}
+              >
+                {String(children).replace(/\n$/, '')}
+              </SyntaxHighlighter>
+            </Box>
+          ) : (
+            <code className={className} {...props}>
+              {children}
+            </code>
+          );
+        },
+        p: ({ children }) => (
+          <Text mb={2} lineHeight="base">
+            {children}
+          </Text>
+        ),
+        ul: ({ children }) => (
+          <VStack align="start" spacing={0.5} my={2} pl={4}>
+            {children}
+          </VStack>
+        ),
+        li: ({ children }) => (
+          <HStack align="start" spacing={1}>
+            <Text as="span" mt={1}>•</Text>
+            <Text>{children}</Text>
+          </HStack>
+        ),
+      }}
+    />
+  );
+};
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
@@ -47,12 +200,8 @@ const ChatInterface = () => {
     setSidebarOpen(!isMobile);
   }, [isMobile]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const toggleSidebar = () => {
@@ -95,68 +244,6 @@ const ChatInterface = () => {
     }
   };
 
-  const BilliLogo = () => (
-    <Text
-      as="button"
-      fontSize="2xl"
-      fontWeight="900"
-      bgGradient="linear(to-r, blue.400, teal.400)"
-      bgClip="text"
-      onClick={() => navigate('/')}
-      _hover={{
-        transform: 'scale(1.05)',
-        textShadow: '0 0 20px rgba(66, 153, 225, 0.3)'
-      }}
-      transition="all 0.3s ease"
-      display="flex"
-      alignItems="center"
-    >
-      Bi//i
-    </Text>
-  );
-
-  const Sidebar = () => (
-    <VStack 
-      spacing={4} 
-      align="stretch" 
-      w="full" 
-      p={4}
-      bg={useColorModeValue('white', 'gray.800')}
-      borderColor={borderColor}
-    >
-      {['assistant', 'creative', 'technical', 'friendly'].map((ai) => (
-        <Button
-          key={ai}
-          variant={selectedAI === ai ? 'solid' : 'ghost'}
-          onClick={() => {
-            setSelectedAI(ai);
-            if (isMobile) onClose();
-          }}
-          colorScheme="blue"
-          w="full"
-          justifyContent="flex-start"
-          px={4}
-          bg={selectedAI === ai 
-            ? useColorModeValue('blue.500', 'blue.200')
-            : 'transparent'
-          }
-          color={selectedAI === ai 
-            ? useColorModeValue('white', 'gray.800')
-            : useColorModeValue('gray.800', 'white')
-          }
-          _hover={{
-            bg: useColorModeValue(
-              selectedAI === ai ? 'blue.600' : 'blue.50',
-              selectedAI === ai ? 'blue.300' : 'blue.700'
-            )
-          }}
-        >
-          {ai.charAt(0).toUpperCase() + ai.slice(1)}
-        </Button>
-      ))}
-    </VStack>
-  );
-
   return (
     <ErrorBoundary fallback={<Text p={4}>Something went wrong. Please try again.</Text>}>
       <Flex h="100vh" direction="column">
@@ -187,7 +274,7 @@ const ChatInterface = () => {
                 }}
                 transition="all 0.2s"
               />
-              <BilliLogo />
+              <BilliLogo navigate={navigate} />
             </HStack>
             <IconButton
               icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
@@ -206,15 +293,24 @@ const ChatInterface = () => {
         <Flex flex={1} overflow="hidden">
           {!isMobile && (
             <Box
-              w="240px"
+              as={motion.div}
+              initial={{ width: "0px" }}
+              animate={{ 
+                width: isSidebarOpen ? "240px" : "0px",
+              }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
               borderRight="1px"
               borderColor={borderColor}
-              display={isSidebarOpen ? 'block' : 'none'}
-              transition="all 0.3s"
+              overflow="hidden"
               bg={useColorModeValue('white', 'gray.800')}
-              shadow="md"
             >
-              <Sidebar />
+              <Sidebar 
+                selectedAI={selectedAI} 
+                setSelectedAI={setSelectedAI} 
+                isMobile={isMobile} 
+                onClose={onClose} 
+                borderColor={borderColor} 
+              />
             </Box>
           )}
 
@@ -222,7 +318,26 @@ const ChatInterface = () => {
             <DrawerOverlay />
             <DrawerContent bg={useColorModeValue('white', 'gray.800')}>
               <DrawerBody p={0}>
-                <Sidebar />
+                <HStack p={4} borderBottomWidth="1px" borderColor={borderColor}>
+                  <IconButton
+                    icon={<ChevronLeftIcon />}
+                    onClick={onClose}
+                    variant="ghost"
+                    aria-label="Close Sidebar"
+                    _hover={{
+                      bg: useColorModeValue('blue.100', 'blue.700'),
+                      transform: 'scale(1.05)'
+                    }}
+                    transition="all 0.2s"
+                  />
+                </HStack>
+                <Sidebar 
+                  selectedAI={selectedAI} 
+                  setSelectedAI={setSelectedAI} 
+                  isMobile={isMobile} 
+                  onClose={onClose} 
+                  borderColor={borderColor} 
+                />
               </DrawerBody>
             </DrawerContent>
           </Drawer>
@@ -243,7 +358,6 @@ const ChatInterface = () => {
                   transition={{ duration: 0.3 }}
                   alignSelf={message.sender === 'user' ? 'flex-end' : 'flex-start'}
                   maxW={{ base: "85%", md: "70%" }}
-                  whileHover={{ scale: 1.01 }}
                 >
                   <HStack spacing={2} align="start">
                     {message.sender !== 'user' && (
@@ -261,38 +375,54 @@ const ChatInterface = () => {
                       borderRadius="lg"
                       shadow="lg"
                       whiteSpace="pre-wrap"
+                      maxW="100%"
+                      sx={{
+                        '& pre': {
+                          whiteSpace: 'pre-wrap',
+                          wordBreak: 'break-word'
+                        },
+                        '& p': {
+                          wordBreak: 'break-word'
+                        }
+                      }}
                       _hover={{
                         shadow: 'xl',
                         transform: 'translateY(-1px)'
                       }}
                       transition="all 0.2s"
                     >
-                      <ReactMarkdown
-                        children={message.content}
-                        components={{
-                          code({ node, inline, className, children, ...props }) {
-                            const match = /language-(\w+)/.exec(className || '');
-                            return !inline && match ? (
-                              <SyntaxHighlighter
-                                style={oneDark}
-                                language={match[1]}
-                                PreTag="div"
-                                {...props}
-                              >
-                                {String(children).replace(/\n$/, '')}
-                              </SyntaxHighlighter>
-                            ) : (
-                              <code className={className} {...props}>
-                                {children}
-                              </code>
-                            );
-                          }
-                        }}
-                      />
+                      <MessageContent content={message.content} />
                     </Box>
                   </HStack>
                 </MotionBox>
               ))}
+              {isLoading && (
+                <MotionBox
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  alignSelf="flex-start"
+                  maxW={{ base: "85%", md: "70%" }}
+                >
+                  <HStack spacing={2} align="start">
+                    <Avatar 
+                      size="sm" 
+                      name={selectedAI}
+                      bg="blue.500"
+                      color="white"
+                    />
+                    <Box
+                      bg={useColorModeValue('white', 'gray.700')}
+                      px={4}
+                      py={3}
+                      borderRadius="lg"
+                      shadow="lg"
+                    >
+                      <TypingIndicator />
+                    </Box>
+                  </HStack>
+                </MotionBox>
+              )}
               <div ref={messagesEndRef} />
             </VStack>
 
