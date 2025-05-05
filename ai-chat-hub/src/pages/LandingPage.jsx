@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import profilePic from '../images/dp2.jpg';
+import profilePic from '../images/profile.jpg';
 import {
   Box,
   Container,
@@ -16,6 +16,8 @@ import {
   Avatar,
   Link,
   Image,
+  useColorMode,
+  IconButton,
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -27,6 +29,7 @@ import {
   BiRocket,
 } from 'react-icons/bi';
 import { RiRobot2Line, RiMessage3Line, RiSendPlaneFill } from 'react-icons/ri';
+import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -89,13 +92,15 @@ const ChatPreview = () => {
     <VStack
       spacing={4}
       p={6}
-      bg="white"
+      bg={useColorModeValue('white', 'gray.800')}
       borderRadius="xl"
       boxShadow="xl"
       w="full"
       maxW="600px"
       position="relative"
       overflow="hidden"
+      border="1px solid"
+      borderColor={useColorModeValue('gray.100', 'gray.700')}
       _before={{
         content: '""',
         position: "absolute",
@@ -103,7 +108,10 @@ const ChatPreview = () => {
         left: 0,
         right: 0,
         bottom: 0,
-        bg: "linear-gradient(145deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%)",
+        bg: useColorModeValue(
+          "linear-gradient(145deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%)",
+          "linear-gradient(145deg, rgba(45,55,72,0.4) 0%, rgba(45,55,72,0) 100%)"
+        ),
         zIndex: 0,
       }}
     >
@@ -115,12 +123,19 @@ const ChatPreview = () => {
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.5 }}
             alignSelf={msg.sender === 'bot' ? 'flex-start' : 'flex-end'}
-            bg={msg.sender === 'bot' ? 'billi.50' : 'billi.500'}
-            color={msg.sender === 'bot' ? 'gray.800' : 'white'}
+            bg={msg.sender === 'bot' 
+              ? useColorModeValue('billi.50', 'gray.700')
+              : useColorModeValue('billi.500', 'billi.400')
+            }
+            color={msg.sender === 'bot' 
+              ? useColorModeValue('gray.800', 'gray.100')
+              : 'white'
+            }
             px={4}
             py={2}
             borderRadius="lg"
             maxW="80%"
+            boxShadow="sm"
           >
             <Text>{msg.text}</Text>
           </MotionBox>
@@ -136,6 +151,7 @@ const LandingPage = () => {
   const bgColor = useColorModeValue('gray.50', 'gray.900');
   const cardBg = useColorModeValue('white', 'gray.800');
   const textColor = useColorModeValue('gray.800', 'white');
+  const { colorMode, toggleColorMode } = useColorMode();
 
   useEffect(() => {
     // Simulate loading time
@@ -156,6 +172,20 @@ const LandingPage = () => {
   return (
     <Box bg={bgColor} minH="100vh" overflow="hidden">
       <Container maxW="container.xl" pt={20}>
+        <Box position="absolute" top={4} right={4}>
+          <IconButton
+            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+            onClick={toggleColorMode}
+            variant="ghost"
+            aria-label="Toggle Theme"
+            size="lg"
+            _hover={{
+              bg: useColorModeValue('blue.100', 'blue.700'),
+              transform: 'scale(1.05)'
+            }}
+            transition="all 0.2s"
+          />
+        </Box>
         <VStack spacing={20} align="center">
           {/* Hero Section with Bot Animation */}
           <MotionBox
@@ -241,24 +271,45 @@ const LandingPage = () => {
           </MotionBox>
 
           {/* Call to Action */}
-          <MotionBox
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Button
-              size="lg"
-              colorScheme="blue"
-              bgGradient="linear(to-r, billi.500, accent.500)"
-              color="white"
-              leftIcon={<RiMessage3Line />}
-              onClick={() => navigate('/chat')}
-              _hover={{
-                bgGradient: "linear(to-r, billi.600, accent.600)",
-              }}
+          <HStack spacing={4}>
+            <MotionBox
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
-              Start Chatting with Billi
-            </Button>
-          </MotionBox>
+              <Button
+                size="lg"
+                colorScheme="blue"
+                bgGradient="linear(to-r, billi.500, accent.500)"
+                color="white"
+                leftIcon={<RiMessage3Line />}
+                onClick={() => navigate('/chat')}
+                _hover={{
+                  bgGradient: "linear(to-r, billi.600, accent.600)",
+                }}
+              >
+                Start Chatting with Billi
+              </Button>
+            </MotionBox>
+            
+            <MotionBox
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                size="lg"
+                variant="outline"
+                borderWidth="2px"
+                borderColor={useColorModeValue('billi.500', 'billi.400')}
+                color={useColorModeValue('billi.500', 'billi.400')}
+                _hover={{
+                  bg: useColorModeValue('billi.50', 'rgba(49, 130, 206, 0.1)')
+                }}
+                leftIcon={<BiRocket />}
+              >
+                About Billi
+              </Button>
+            </MotionBox>
+          </HStack>
 
           {/* Testimonials Section */}
           <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={8} w="full">
