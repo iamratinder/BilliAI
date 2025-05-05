@@ -37,7 +37,7 @@ const MotionFlex = motion(Flex);
 const features = [
   { icon: BiConversation, title: 'Natural Conversations', description: 'Chat naturally with advanced language understanding' },
   { icon: BiBrain, title: 'Smart Learning', description: 'Adapts to your style and preferences' },
-  { icon: BiAnalyse, title: 'Data Analysis', description: 'Process and analyze complex information' },
+  { icon: BiAnalyse, title: 'Quick Insights', description: 'Process and analyze complex information' },
   { icon: BiRocket, title: 'Task Automation', description: 'Automate your daily workflows' },
 ];
 
@@ -173,18 +173,32 @@ const LandingPage = () => {
     <Box bg={bgColor} minH="100vh" overflow="hidden">
       <Container maxW="container.xl" pt={20}>
         <Box position="absolute" top={4} right={4}>
-          <IconButton
-            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-            onClick={toggleColorMode}
-            variant="ghost"
-            aria-label="Toggle Theme"
-            size="lg"
-            _hover={{
-              bg: useColorModeValue('blue.100', 'blue.700'),
-              transform: 'scale(1.05)'
-            }}
-            transition="all 0.2s"
-          />
+          <HStack spacing={4}>
+            <Button
+              variant="ghost"
+              onClick={() => navigate('/about')}
+              leftIcon={<BiRocket />}
+              _hover={{
+                bg: useColorModeValue('blue.100', 'blue.700'),
+                transform: 'scale(1.05)'
+              }}
+              transition="all 0.2s"
+            >
+              About
+            </Button>
+            <IconButton
+              icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+              onClick={toggleColorMode}
+              variant="ghost"
+              aria-label="Toggle Theme"
+              size="lg"
+              _hover={{
+                bg: useColorModeValue('blue.100', 'blue.700'),
+                transform: 'scale(1.05)'
+              }}
+              transition="all 0.2s"
+            />
+          </HStack>
         </Box>
         <VStack spacing={20} align="center">
           {/* Hero Section with Bot Animation */}
@@ -246,32 +260,8 @@ const LandingPage = () => {
             <ChatPreview />
           </MotionBox>
 
-          {/* Personal Touch Section */}
-          <MotionBox
-            variant="glass"
-            p={12}
-            borderRadius="2xl"
-            textAlign="center"
-            maxW="800px"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Avatar 
-              size="2xl" 
-              name="Ratinderdeep Singh"
-              src={profilePic}
-              mb={6}
-            />
-            <Heading size="lg" mb={4}>Crafted by Ratinderdeep Singh</Heading>
-            <Text fontSize="lg" mb={6}>
-              "Building Billi has been a journey of combining cutting-edge AI technology
-              with human-centered design to create something truly meaningful."
-            </Text>
-          </MotionBox>
-
           {/* Call to Action */}
-          <HStack spacing={4}>
+          <VStack spacing={4}>
             <MotionBox
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -309,8 +299,10 @@ const LandingPage = () => {
                 About Billi
               </Button>
             </MotionBox> */}
-          </HStack>
+          </VStack>
 
+          {/* Remove the Personal Touch Section */}
+          
           {/* Testimonials Section */}
           <Grid templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} gap={8} w="full">
             {testimonials.map((testimonial, index) => (
@@ -350,7 +342,7 @@ const LandingPage = () => {
                 </Link>
               </HStack>
               <Text fontSize="sm" color="gray.500">
-                © 2025 Billi AI Assistant. Created with ❤️ by Ratinderdeep Singh
+                © 2025 Billi AI. Created with ❤️ by Ratinderdeep Singh
               </Text>
             </VStack>
           </Box>
