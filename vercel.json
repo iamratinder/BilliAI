@@ -3,12 +3,20 @@
   "builds": [
     {
       "src": "ai-chat-hub/package.json",
-      "use": "@vercel/vite"
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/[^.]+",
+      "dest": "ai-chat-hub/index.html",
+      "status": 200
+    },
+    {
+      "src": "/(.+)",
       "dest": "ai-chat-hub/$1"
     }
   ]
