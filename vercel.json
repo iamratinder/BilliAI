@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "ai-chat-hub/package.json",
-      "use": "@vercel/next"
+      "use": "@vercel/vite"
     }
   ],
   "routes": [
