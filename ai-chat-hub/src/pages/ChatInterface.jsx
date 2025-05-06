@@ -18,9 +18,12 @@ import {
   useDisclosure,
   useColorMode,
   Spinner,
+  Textarea,
+  useToast,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { ChevronLeftIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
+import { FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { chatAPI } from '../services/api';
 import ReactMarkdown from 'react-markdown';
@@ -181,6 +184,42 @@ const MessageContent = ({ content }) => {
   );
 };
 
+// Add this custom hook after the imports and before components
+const useAutoHeightTextarea = () => {
+  const textareaRef = useRef(null);
+
+  const adjustHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      const scrollPos = window.scrollY;
+      // Reset height to initial value if content is empty
+      if (!textarea.value.trim()) {
+        textarea.style.height = '50px';
+      } else {
+        textarea.style.height = '50px';
+        const scrollHeight = textarea.scrollHeight;
+        textarea.style.height = `${Math.min(Math.max(scrollHeight, 50), 200)}px`;
+      }
+      window.scrollTo(0, scrollPos);
+    }
+  };
+
+  const resetHeight = () => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = '50px'; // Changed from 60px
+    }
+  };
+
+  return [textareaRef, adjustHeight, resetHeight];
+};
+
+// Add these constants before the ChatInterface component
+const RATE_LIMIT_MS = 2000; // 2 seconds between messages
+const MAX_MESSAGES_PER_MINUTE = 20;
+const MAX_MESSAGES_PER_DAY = 900;
+const MESSAGE_HISTORY_WINDOW = 60000; // 1 minute in milliseconds
+
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -191,10 +230,26 @@ const ChatInterface = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
   const { colorMode, toggleColorMode } = useColorMode();
+  const toast = useToast();
 
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.600');
   const isMobile = useBreakpointValue({ base: true, md: false });
+
+  const [textareaRef, adjustHeight, resetHeight] = useAutoHeightTextarea();
+
+  const [lastMessageTime, setLastMessageTime] = useState(0);
+  const [messageHistory, setMessageHistory] = useState([]);
+
+  // Add this effect to clean up old message history
+  useEffect(() => {
+    const cleanup = setInterval(() => {
+      const now = Date.now();
+      setMessageHistory(prev => prev.filter(time => now - time < MESSAGE_HISTORY_WINDOW));
+    }, MESSAGE_HISTORY_WINDOW);
+    
+    return () => clearInterval(cleanup);
+  }, []);
 
   useEffect(() => {
     setSidebarOpen(!isMobile);
@@ -211,6 +266,48 @@ const ChatInterface = () => {
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
 
+    const now = Date.now();
+    
+    // Check rate limit
+    if (now - lastMessageTime < RATE_LIMIT_MS) {
+      toast({
+        title: "Please wait",
+        description: `You can send another message in ${Math.ceil((RATE_LIMIT_MS - (now - lastMessageTime)) / 1000)} seconds`,
+        status: "warning",
+        duration: 2000
+      });
+      return;
+    }
+
+    // Check messages per minute limit
+    const messagesLastMinute = messageHistory.filter(time => now - time < MESSAGE_HISTORY_WINDOW).length;
+    if (messagesLastMinute >= MAX_MESSAGES_PER_MINUTE) {
+      toast({
+        title: "Rate limit exceeded",
+        description: "You've reached the maximum messages per minute limit. Please wait.",
+        status: "error",
+        duration: 3000
+      });
+      return;
+    }
+
+    // Check messages per day limit
+    const today = new Date().toDateString();
+    const dailyMessageCount = parseInt(localStorage.getItem(`messageCount_${today}`) || '0');
+    if (dailyMessageCount >= MAX_MESSAGES_PER_DAY) {
+      toast({
+        title: "Daily limit exceeded",
+        description: "You've reached the maximum messages per day limit.",
+        status: "error",
+        duration: 3000
+      });
+      return;
+    }
+
+    setLastMessageTime(now);
+    setMessageHistory(prev => [...prev, now]);
+    localStorage.setItem(`messageCount_${today}`, (dailyMessageCount + 1).toString());
+
     const userMessage = {
       content: input,
       sender: 'user',
@@ -219,9 +316,10 @@ const ChatInterface = () => {
 
     setMessages((prev) => [...prev, userMessage]);
     setInput('');
-    setIsLoading(true);
+    resetHeight(); // Reset textarea height after sending
 
     try {
+      setIsLoading(true);
       const response = await chatAPI.sendMessage(input, selectedAI);
 
       const aiMessage = {
@@ -436,12 +534,20 @@ const ChatInterface = () => {
               borderRadius="lg"
               shadow="lg"
             >
-              <Input
+              <Textarea
+                ref={textareaRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => {
+                  setInput(e.target.value);
+                  adjustHeight();
+                }}
                 placeholder="Type your message..."
-                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                disabled={isLoading}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
                 size="lg"
                 borderRadius="lg"
                 _focus={{
@@ -449,6 +555,12 @@ const ChatInterface = () => {
                   boxShadow: '0 0 0 1px blue.400'
                 }}
                 bg={useColorModeValue('white', 'gray.700')}
+                minH="50px" // Changed from 60px
+                maxH="200px"
+                h="50px" // Changed from 60px
+                resize="none"
+                overflowY="auto"
+                style={{ transition: 'height 0.1s ease-out' }}
               />
               <Button 
                 colorScheme="blue"
