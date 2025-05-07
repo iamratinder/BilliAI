@@ -18,6 +18,7 @@ import {
   Image,
   useColorMode,
   IconButton,
+  Input,
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -220,6 +221,8 @@ const LandingPage = () => {
               bgClip="text"
               letterSpacing="tight"
               mb={6}
+              pb={2}
+              lineHeight="1.2"
             >
               Meet Billi — Your Everyday AI Companion
             </Heading>
@@ -228,6 +231,28 @@ const LandingPage = () => {
               Powered by advanced AI to make your life simpler and more productive.
             </Text>
           </MotionBox>
+
+          {/* Call to Action */}
+          <VStack spacing={4}>
+            <MotionBox
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button
+                size="lg"
+                colorScheme="blue"
+                bgGradient="linear(to-r, billi.500, accent.500)"
+                color="white"
+                leftIcon={<RiMessage3Line />}
+                onClick={() => navigate('/chat')}
+                _hover={{
+                  bgGradient: "linear(to-r, billi.600, accent.600)",
+                }}
+              >
+                Start Chatting with Billi
+              </Button>
+            </MotionBox>
+          </VStack>
 
           {/* Features Section */}
           <Grid 
@@ -253,6 +278,9 @@ const LandingPage = () => {
             ))}
           </Grid>
 
+
+          
+
           {/* Chat Preview Section */}
           <MotionBox
             initial={{ opacity: 0, y: 40 }}
@@ -265,47 +293,152 @@ const LandingPage = () => {
             <ChatPreview />
           </MotionBox>
 
-          {/* Call to Action */}
-          <VStack spacing={4}>
-            <MotionBox
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              <Button
-                size="lg"
-                colorScheme="blue"
-                bgGradient="linear(to-r, billi.500, accent.500)"
-                color="white"
-                leftIcon={<RiMessage3Line />}
-                onClick={() => navigate('/chat')}
-                _hover={{
-                  bgGradient: "linear(to-r, billi.600, accent.600)",
-                }}
-              >
-                Start Chatting with Billi
-              </Button>
-            </MotionBox>
-          </VStack>
+          
           
 
           {/* Footer */}
-          <Box as="footer" w="full" py={10}>
-            <VStack spacing={4}>
-              <HStack spacing={6}>
-                <Link href="https://github.com/iamratinder" isExternal>
-                  <Icon as={FaGithub} w={6} h={6} />
-                </Link>
-                <Link href="https://twitter.com/Ratinder_999" isExternal>
-                  <Icon as={FaTwitter} w={6} h={6} />
-                </Link>
-                <Link href="https://linkedin.com/in/ratinderdeepsingh" isExternal>
-                  <Icon as={FaLinkedin} w={6} h={6} />
-                </Link>
-              </HStack>
-              <Text fontSize="sm" color="gray.500">
-                © 2025 Billi AI. Created with ❤️ by Ratinderdeep Singh
-              </Text>
-            </VStack>
+          <Box
+            as="footer"
+            w="full"
+            py={16}
+            borderTop="1px"
+            borderColor={useColorModeValue('gray.200', 'gray.700')}
+            bg="transparent"
+            position="relative"
+            mt={12}
+          >
+            <Container 
+              maxW="100vw"
+              px={0}
+              mx={0}
+            >
+              <Grid
+                templateColumns={{
+                  base: '1fr',
+                  md: 'repeat(2, 1fr)',
+                  lg: 'repeat(3, 1fr)',
+                }}
+                gap={12}
+              >
+                {/* Company Info */}
+                <VStack align="start" spacing={6}>
+                  <MotionBox
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <Heading
+                      size="md"
+                      bgGradient="linear(to-r, billi.500, billi.400)"
+                      bgClip="text"
+                      letterSpacing="tight"
+                    >
+                      Billi AI
+                    </Heading>
+                  </MotionBox>
+                  <Text 
+                    fontSize="sm" 
+                    color={useColorModeValue('gray.600', 'gray.400')}
+                    lineHeight="tall"
+                    maxW="300px"
+                  >
+                    Empowering conversations through artificial intelligence. Making technology more human, one chat at a time.
+                  </Text>
+                </VStack>
+
+                {/* Quick Links */}
+                <VStack align="start" spacing={6}>
+                  <Heading 
+                    size="sm" 
+                    textTransform="uppercase"
+                    letterSpacing="wide"
+                  >
+                    Quick Links
+                  </Heading>
+                  <VStack align="start" spacing={2}>
+                    {[
+                      { name: 'About', href: '/about' },
+                      { name: 'Features', href: '#features' },
+                      { name: 'Pricing', href: '#pricing' },
+                      { name: 'Blog', href: '#blog' },
+                      { name: 'Contact', href: '#contact' }
+                    ].map((link) => (
+                      <Link
+                        key={link.name}
+                        href={link.href}
+                        fontSize="sm"
+                        color={useColorModeValue('gray.600', 'gray.400')}
+                        _hover={{
+                          color: 'billi.500',
+                          transform: 'translateX(4px)',
+                        }}
+                        transition="all 0.3s ease"
+                      >
+                        {link.name}
+                      </Link>
+                    ))}
+                  </VStack>
+                </VStack>
+
+                {/* Contact */}
+                <VStack align="start" spacing={4}>
+                  <Heading size="sm">Connect</Heading>
+                  <HStack spacing={4}>
+                    {[
+                      { icon: FaGithub, href: 'https://github.com/iamratinder' },
+                      { icon: FaTwitter, href: 'https://twitter.com/Ratinder_999' },
+                      { icon: FaLinkedin, href: 'https://linkedin.com/in/ratinderdeepsingh' },
+                    ].map((social, index) => (
+                      <MotionBox
+                        key={index}
+                        whileHover={{ scale: 1.2, rotate: 5 }}
+                        whileTap={{ scale: 0.9 }}
+                      >
+                        <Link href={social.href} isExternal>
+                          <Icon
+                            as={social.icon}
+                            w={5}
+                            h={5}
+                            color={useColorModeValue('gray.600', 'gray.400')}
+                            _hover={{ color: 'billi.500' }}
+                            transition="all 0.3s ease"
+                          />
+                        </Link>
+                      </MotionBox>
+                    ))}
+                  </HStack>
+                  <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
+                    Email: hello@billiai.com
+                  </Text>
+                </VStack>
+              </Grid>
+
+              {/* Bottom Bar */}
+              <MotionBox
+                borderTop="1px"
+                borderColor={useColorModeValue('gray.200', 'gray.700')}
+                mt={8}
+                pt={8}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <Flex
+                  direction={{ base: 'column', md: 'row' }}
+                  justify="space-between"
+                  align="center"
+                  gap={4}
+                >
+                  <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
+                    © 2025 Billi AI. Created with ❤️ by Ratinderdeep Singh
+                  </Text>
+                  <HStack spacing={6} fontSize="sm" color={useColorModeValue('gray.600', 'gray.400')}>
+                    <Link href="#" _hover={{ color: 'billi.500' }}>Privacy Policy</Link>
+                    <Link href="#" _hover={{ color: 'billi.500' }}>Terms of Service</Link>
+                    <Link href="#" _hover={{ color: 'billi.500' }}>Cookie Policy</Link>
+                  </HStack>
+                </Flex>
+              </MotionBox>
+            </Container>
           </Box>
         </VStack>
       </Container>

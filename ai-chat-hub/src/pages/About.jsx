@@ -106,6 +106,9 @@ const About = () => {
               "Building Billi has been a journey of combining cutting-edge AI technology
               with human-centered design to create something truly meaningful."
             </Text>
+            <Text fontSize='larger' mb={6} color={textColor}>
+              It's just the beggining - there’s much more to come.
+            </Text>
           </MotionBox>
 
           {/* Project Description */}

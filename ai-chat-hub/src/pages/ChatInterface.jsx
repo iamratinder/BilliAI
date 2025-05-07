@@ -20,6 +20,7 @@ import {
   Spinner,
   Textarea,
   useToast,
+  Image,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { ChevronLeftIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
@@ -29,6 +30,7 @@ import { chatAPI } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import logo from '/Billi_logo_light.png';
 
 const MotionBox = motion(Box);
 
@@ -87,7 +89,7 @@ const BilliLogo = ({ navigate }) => (
     as="button"
     fontSize="2xl"
     fontWeight="900"
-    bgGradient="linear(to-r, blue.400, teal.400)"
+    bgGradient="linear(to-r, billi.400, teal.400)"
     bgClip="text"
     onClick={() => navigate('/')}
     _hover={{
@@ -219,6 +221,158 @@ const RATE_LIMIT_MS = 2000; // 2 seconds between messages
 const MAX_MESSAGES_PER_MINUTE = 20;
 const MAX_MESSAGES_PER_DAY = 900;
 const MESSAGE_HISTORY_WINDOW = 60000; // 1 minute in milliseconds
+
+const WelcomeMessage = () => {
+  const textColor = useColorModeValue('gray.600', 'gray.300');
+  const bgGradient = useColorModeValue(
+    'linear(to-t, blue.500, blue.400, teal.200)',
+    // 'linear(to-r, blue.400, teal.400)',
+    'linear(to-r, blue.200, teal.200)'
+  );
+  
+  const features = [
+    { icon: '📝', title: 'AI Assistant', desc: 'Intelligent conversations' },
+    { icon: '⚡', title: 'Real-time', desc: 'Instant responses' },
+    { icon: '🎯', title: 'Precise', desc: 'Accurate solutions' },
+    { icon: '🔐', title: 'Secure', desc: 'Private chats' }
+  ];
+
+  return (
+    <VStack
+      spacing={8}
+      justify="center"
+      align="center"
+      height="100%"
+      as={motion.div}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+    >
+      <motion.div
+        initial={{ scale: 0.5, y: 50 }}
+        animate={{ scale: 1, y: 0 }}
+        transition={{
+          type: "spring",
+          stiffness: 260,
+          damping: 20
+        }}
+      >
+        <Box
+          p={2}
+          borderRadius="full"
+          borderWidth={10}
+          borderColor={useColorModeValue('billi.500', 'blue.400')} // Changed dark theme color
+          bgGradient={useColorModeValue('billi.500', 'billi.400')}
+          position="relative"
+          _after={{
+            content: '""',
+            position: 'absolute',
+            top: -2,
+            left: -2,
+            right: -2,
+            bottom: -2,
+            filter: 'blur(15px)',
+            opacity: 0.3,
+            borderRadius: 'full',
+            zIndex: -1
+          }}
+        >
+          <Image
+            src={logo}
+            alt="Billi Logo"
+            boxSize="80px"
+            objectFit="contain"
+            filter="brightness(0.95) contrast(1.1)"
+            transform="scale(1.2)"
+            opacity={0.9}
+            _hover={{
+              transform: "scale(1.3)",
+              opacity: 1
+            }}
+            transition="all 0.3s ease"
+          />
+        </Box>
+      </motion.div>
+
+      <VStack spacing={1}>
+        <Text
+          fontSize={{ base: "3xl", md: "4xl" }}
+          fontWeight="bold"
+          bgGradient={bgGradient}
+          bgClip="text"
+          textAlign="center"
+        >
+          Welcome to BilliAI
+        </Text>
+        <Text
+          color={textColor}
+          textAlign="center"
+          maxW="md"
+          fontSize="lg"
+        >
+          Your intelligent conversation partner
+        </Text>
+      </VStack>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        <HStack 
+          spacing={{ base: 4, md: 6 }} 
+          flexWrap="wrap" 
+          justify="center"
+          maxW="2xl"
+          py={4}
+        >
+          {features.map((feature, index) => (
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 + index * 0.1 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <VStack
+                p={4}
+                bg={useColorModeValue('white', 'gray.700')}
+                borderRadius="xl"
+                shadow="lg"
+                minW="120px"
+                spacing={2}
+                cursor="pointer"
+                _hover={{
+                  shadow: 'xl',
+                  transform: 'translateY(-2px)'
+                }}
+                transition="all 0.2s"
+              >
+                <Text fontSize="2xl">{feature.icon}</Text>
+                <Text fontWeight="bold" fontSize="sm">{feature.title}</Text>
+                <Text fontSize="xs" color={textColor} textAlign="center">
+                  {feature.desc}
+                </Text>
+              </VStack>
+            </motion.div>
+          ))}
+        </HStack>
+      </motion.div>
+
+      <Text
+        color={textColor}
+        fontSize="sm"
+        opacity={0.8}
+        as={motion.p}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.8 }}
+        transition={{ delay: 0.8 }}
+      >
+        Type a message below to get started
+      </Text>
+    </VStack>
+  );
+};
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
@@ -448,52 +602,58 @@ const ChatInterface = () => {
             position="relative"
           >
             <VStack flex={1} overflow="auto" spacing={4} align="stretch">
-              {messages.map((message, index) => (
-                <MotionBox
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                  alignSelf={message.sender === 'user' ? 'flex-end' : 'flex-start'}
-                  maxW={{ base: "85%", md: "70%" }}
-                >
-                  <HStack spacing={2} align="start">
-                    {message.sender !== 'user' && (
-                      <Avatar 
-                        size="sm" 
-                        name={message.sender}
-                        bg="blue.500"
-                        color="white"
-                      />
-                    )}
-                    <Box
-                      bg={message.sender === 'user' ? 'blue.500' : useColorModeValue('white', 'gray.700')}
-                      color={message.sender === 'user' ? 'white' : useColorModeValue('gray.800', 'white')}
-                      p={3}
-                      borderRadius="lg"
-                      shadow="lg"
-                      whiteSpace="pre-wrap"
-                      maxW="100%"
-                      sx={{
-                        '& pre': {
-                          whiteSpace: 'pre-wrap',
-                          wordBreak: 'break-word'
-                        },
-                        '& p': {
-                          wordBreak: 'break-word'
-                        }
-                      }}
-                      _hover={{
-                        shadow: 'xl',
-                        transform: 'translateY(-1px)'
-                      }}
-                      transition="all 0.2s"
+              {messages.length === 0 ? (
+                <WelcomeMessage />
+              ) : (
+                <>
+                  {messages.map((message, index) => (
+                    <MotionBox
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      alignSelf={message.sender === 'user' ? 'flex-end' : 'flex-start'}
+                      maxW={{ base: "85%", md: "70%" }}
                     >
-                      <MessageContent content={message.content} />
-                    </Box>
-                  </HStack>
-                </MotionBox>
-              ))}
+                      <HStack spacing={2} align="start">
+                        {message.sender !== 'user' && (
+                          <Avatar 
+                            size="sm" 
+                            name={message.sender}
+                            bg="blue.500"
+                            color="white"
+                          />
+                        )}
+                        <Box
+                          bg={message.sender === 'user' ? 'blue.500' : useColorModeValue('white', 'gray.700')}
+                          color={message.sender === 'user' ? 'white' : useColorModeValue('gray.800', 'white')}
+                          p={3}
+                          borderRadius="lg"
+                          shadow="lg"
+                          whiteSpace="pre-wrap"
+                          maxW="100%"
+                          sx={{
+                            '& pre': {
+                              whiteSpace: 'pre-wrap',
+                              wordBreak: 'break-word'
+                            },
+                            '& p': {
+                              wordBreak: 'break-word'
+                            }
+                          }}
+                          _hover={{
+                            shadow: 'xl',
+                            transform: 'translateY(-1px)'
+                          }}
+                          transition="all 0.2s"
+                        >
+                          <MessageContent content={message.content} />
+                        </Box>
+                      </HStack>
+                    </MotionBox>
+                  ))}
+                </>
+              )}
               {isLoading && (
                 <MotionBox
                   initial={{ opacity: 0, y: 20 }}
