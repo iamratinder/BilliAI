@@ -231,15 +231,15 @@ const WelcomeMessage = () => {
   );
   
   const features = [
-    { icon: '📝', title: 'AI Assistant', desc: 'Intelligent conversations' },
-    { icon: '⚡', title: 'Real-time', desc: 'Instant responses' },
-    { icon: '🎯', title: 'Precise', desc: 'Accurate solutions' },
-    { icon: '🔐', title: 'Secure', desc: 'Private chats' }
+    { icon: '📝', title: 'Assistant', desc: 'Smart AI Chat' },
+    { icon: '⚡', title: 'Real-time', desc: 'Quick Replies' },
+    { icon: '🎯', title: 'Precise', desc: 'Clear Results' },
+    { icon: '🔐', title: 'Private', desc: 'Secure Chat' }
   ];
 
   return (
     <VStack
-      spacing={8}
+      spacing={6}
       justify="center"
       align="center"
       height="100%"
@@ -260,9 +260,9 @@ const WelcomeMessage = () => {
         <Box
           p={2}
           borderRadius="full"
-          borderWidth={10}
-          borderColor={useColorModeValue('billi.500', 'blue.400')} // Changed dark theme color
-          bgGradient={useColorModeValue('billi.500', 'billi.400')}
+          borderWidth={2}
+          borderColor={useColorModeValue('white', 'white')}
+          bg={useColorModeValue('blue.500', 'blue.400')}
           position="relative"
           _after={{
             content: '""',
@@ -282,9 +282,8 @@ const WelcomeMessage = () => {
             alt="Billi Logo"
             boxSize="80px"
             objectFit="contain"
-            filter="brightness(0.95) contrast(1.1)"
             transform="scale(1.2)"
-            opacity={0.9}
+            opacity={1}
             _hover={{
               transform: "scale(1.3)",
               opacity: 1
@@ -335,11 +334,13 @@ const WelcomeMessage = () => {
               whileHover={{ scale: 1.05 }}
             >
               <VStack
-                p={4}
+                p={3}
                 bg={useColorModeValue('white', 'gray.700')}
                 borderRadius="xl"
                 shadow="lg"
-                minW="120px"
+                w="120px"
+                h="120px"
+                justify="center"
                 spacing={2}
                 cursor="pointer"
                 _hover={{
@@ -350,7 +351,7 @@ const WelcomeMessage = () => {
               >
                 <Text fontSize="2xl">{feature.icon}</Text>
                 <Text fontWeight="bold" fontSize="sm">{feature.title}</Text>
-                <Text fontSize="xs" color={textColor} textAlign="center">
+                <Text fontSize="xs" color={textColor} textAlign="center" noOfLines={1}>
                   {feature.desc}
                 </Text>
               </VStack>
