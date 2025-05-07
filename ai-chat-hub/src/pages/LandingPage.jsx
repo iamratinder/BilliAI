@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import profilePic from '../images/profile.jpg';
 import {
   Box,
   Container,
@@ -13,12 +12,10 @@ import {
   Icon,
   Flex,
   Spinner,
-  Avatar,
   Link,
-  Image,
   useColorMode,
   IconButton,
-  Input,
+  Image,
 } from '@chakra-ui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -29,8 +26,9 @@ import {
   BiAnalyse,
   BiRocket,
 } from 'react-icons/bi';
-import { RiRobot2Line, RiMessage3Line, RiSendPlaneFill } from 'react-icons/ri';
+import { RiRobot2Line, RiMessage3Line } from 'react-icons/ri';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
+import Logo from '../assets/Billi_logo_light.png';
 
 const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
@@ -42,25 +40,11 @@ const features = [
   { icon: BiRocket, title: 'Task Automation', description: 'Automate your daily workflows' },
 ];
 
-const testimonials = [
-  {
-    name: 'Sarah Johnson',
-    role: 'Product Manager',
-    content: 'Billi has transformed how I organize my daily tasks.',
-    avatar: 'https://i.pravatar.cc/150?img=1',
-  },
-  {
-    name: 'Mike Chen',
-    role: 'Developer',
-    content: 'The most intuitive AI assistant I\'ve ever used.',
-    avatar: 'https://i.pravatar.cc/150?img=2',
-  },
-];
-
 const BilliBot = () => (
   <MotionBox
     animate={{ 
       y: [0, -20, 0],
+      // scale: [1, 1.1, 1],
       rotate: [0, 5, -5, 0]
     }}
     transition={{ 
@@ -69,13 +53,18 @@ const BilliBot = () => (
       ease: "easeInOut"
     }}
     w="200px"
+    // w='150px'
     h="200px"
     position="relative"
   >
+    {/* <Image
+      src={Logo} */}
     <Icon
       as={RiRobot2Line}
+      alt="Billi AI Logo"
       w="100%"
       h="100%"
+      // h='auto'
       color="billi.500"
       filter="drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.1))"
     />
@@ -178,6 +167,29 @@ const LandingPage = () => {
   return (
     <Box bg={bgColor} minH="100vh" overflow="hidden">
       <Container maxW="container.xl" pt={20}>
+        {/* Add Logo */}
+        <Box position="absolute" top={4} left={4}>
+          <HStack spacing={2}>
+            <Image
+              src={Logo}
+              alt="Billi AI Logo"
+              height="30px"
+              width="auto"
+            />
+            <Heading
+              as="button"
+              onClick={() => navigate('/')}
+              size="lg"
+              bgColor={'billi.500'}
+              // bgGradient="linear(to-r, billi.500, accent.500)"
+              bgClip="text"
+              letterSpacing="tight"
+            >
+              Billi
+            </Heading>
+          </HStack>
+        </Box>
+        
         <Box position="absolute" top={4} right={4}>
           <HStack spacing={4}>
             <Button

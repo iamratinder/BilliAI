@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Flex,
-  Input,
   Button,
   VStack,
   HStack,
@@ -24,13 +23,12 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { ChevronLeftIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
-import { FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { chatAPI } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import logo from '/Billi_logo_light.png';
+import logo from '../assets/Billi_logo_light.png';
 
 const MotionBox = motion(Box);
 
@@ -85,23 +83,25 @@ const Sidebar = ({ selectedAI, setSelectedAI, isMobile, onClose, borderColor }) 
 };
 
 const BilliLogo = ({ navigate }) => (
-  <Text
+  <HStack
     as="button"
-    fontSize="2xl"
-    fontWeight="900"
-    bgGradient="linear(to-r, billi.400, teal.400)"
-    bgClip="text"
     onClick={() => navigate('/')}
+    spacing={2}
     _hover={{
       transform: 'scale(1.05)',
-      textShadow: '0 0 20px rgba(66, 153, 225, 0.3)'
     }}
     transition="all 0.3s ease"
-    display="flex"
-    alignItems="center"
   >
-    Billi
-  </Text>
+    <Text
+      fontSize="3xl"
+      fontWeight="700"
+      // bgGradient="linear(to-r, blue.400, teal.400)"
+      bgColor={'billi.500'}
+      bgClip="text"
+    >
+      Billi
+    </Text>
+  </HStack>
 );
 
 const bounceVariant = {
