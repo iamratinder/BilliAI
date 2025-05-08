@@ -618,17 +618,19 @@ const ChatInterface = () => {
                     >
                       <HStack spacing={2} align="start">
                         {message.sender !== 'user' && (
-                          <Avatar 
-                            size="sm" 
-                            name={message.sender}
-                            bg="blue.500"
-                            color="white"
+                          <Image
+                            src={logo}
+                            alt="Billi Logo"
+                            boxSize="35px"  // adjusted size
+                            objectFit="contain"
+                            borderRadius="full"
                           />
                         )}
                         <Box
                           bg={message.sender === 'user' ? 'blue.500' : useColorModeValue('white', 'gray.700')}
                           color={message.sender === 'user' ? 'white' : useColorModeValue('gray.800', 'white')}
-                          p={3}
+                          px={3}
+                          py={2}
                           borderRadius="lg"
                           shadow="lg"
                           whiteSpace="pre-wrap"
@@ -664,11 +666,12 @@ const ChatInterface = () => {
                   maxW={{ base: "85%", md: "70%" }}
                 >
                   <HStack spacing={2} align="start">
-                    <Avatar 
-                      size="sm" 
-                      name={selectedAI}
-                      bg="blue.500"
-                      color="white"
+                    <Image
+                      src={logo}
+                      alt="Billi Logo"
+                      boxSize="35px"
+                      objectFit="contain"
+                      borderRadius="full"
                     />
                     <Box
                       bg={useColorModeValue('white', 'gray.700')}
@@ -716,9 +719,9 @@ const ChatInterface = () => {
                   boxShadow: '0 0 0 1px blue.400'
                 }}
                 bg={useColorModeValue('white', 'gray.700')}
-                minH="50px" // Changed from 60px
+                minH="50px" 
                 maxH="200px"
-                h="50px" // Changed from 60px
+                h="50px"
                 resize="none"
                 overflowY="auto"
                 style={{ transition: 'height 0.1s ease-out' }}
