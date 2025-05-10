@@ -98,9 +98,7 @@ const BilliLogo = ({ navigate }) => (
     as="button"
     onClick={() => navigate('/')}
     spacing={2}
-    _hover={{
-      transform: 'scale(1.05)',
-    }}
+    _hover={{ transform: 'scale(1.05)' }}
     transition="all 0.3s ease"
   >
     <Text
