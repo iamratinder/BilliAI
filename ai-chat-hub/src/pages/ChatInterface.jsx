@@ -32,50 +32,61 @@ import logo from '../assets/Billi_logo_light.png';
 
 const MotionBox = motion(Box);
 
+const AI_PERSONALITIES = {
+  assistant: {
+    name: 'Assistant',
+    color: 'blue'
+  },
+  creative: {
+    name: 'Creative',
+    color: 'purple'
+  },
+  technical: {
+    name: 'Technical',
+    color: 'green'
+  },
+  friendly: {
+    name: 'Friendly',
+    color: 'orange'
+  }
+};
+
 const Sidebar = ({ selectedAI, setSelectedAI, isMobile, onClose, borderColor }) => {
   const useColorValue = useColorModeValue('white', 'gray.800');
   
   return (
-    <VStack 
-      spacing={4} 
-      align="stretch" 
-      w="full" 
-      p={4}
-      bg={useColorValue}
-      borderColor={borderColor}
-      as={motion.div}
-      initial={{ x: -240 }}
-      animate={{ x: 0 }}
-      transition={{ type: "tween", duration: 0.6, ease: "easeOut" }}
-      >
-      {['assistant', 'creative', 'technical', 'friendly'].map((ai) => (
+    <VStack spacing={4} align="stretch" w="full" p={4} bg={useColorValue}>
+      {Object.entries(AI_PERSONALITIES).map(([aiType, aiInfo]) => (
         <Button
-          key={ai}
-          variant={selectedAI === ai ? 'solid' : 'ghost'}
+          key={aiType}
+          variant={selectedAI === aiType ? 'solid' : 'ghost'}
           onClick={() => {
-            setSelectedAI(ai);
+            setSelectedAI(aiType);
             if (isMobile) onClose();
           }}
-          colorScheme="blue"
+          colorScheme={aiInfo.color}
           w="full"
           justifyContent="flex-start"
           px={4}
-          bg={selectedAI === ai 
-            ? useColorModeValue('blue.500', 'blue.200')
+          bg={selectedAI === aiType 
+            ? useColorModeValue(`${aiInfo.color}.500`, `${aiInfo.color}.200`)
             : 'transparent'
           }
-          color={selectedAI === ai 
+          color={selectedAI === aiType 
             ? useColorModeValue('white', 'gray.800')
             : useColorModeValue('gray.800', 'white')
           }
           _hover={{
             bg: useColorModeValue(
-              selectedAI === ai ? 'blue.600' : 'blue.50',
-              selectedAI === ai ? 'blue.300' : 'blue.700'
+              selectedAI === aiType ? `${aiInfo.color}.600` : `${aiInfo.color}.50`,
+              selectedAI === aiType ? `${aiInfo.color}.300` : `${aiInfo.color}.700`
             )
           }}
         >
-          {ai.charAt(0).toUpperCase() + ai.slice(1)}
+          <VStack align="start" spacing={0}>
+            <Text>{aiInfo.name}</Text>
+            <Text fontSize="xs" opacity={0.8}>{aiInfo.description}</Text>
+          </VStack>
         </Button>
       ))}
     </VStack>
@@ -481,6 +492,7 @@ const ChatInterface = () => {
         content: response || 'No response received',
         sender: selectedAI,
         timestamp: new Date().toISOString(),
+        personality: AI_PERSONALITIES[selectedAI]
       };
 
       setMessages((prev) => [...prev, aiMessage]);
