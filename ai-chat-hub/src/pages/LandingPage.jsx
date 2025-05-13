@@ -30,14 +30,53 @@ import { RiRobot2Line, RiMessage3Line } from 'react-icons/ri';
 import { SunIcon, MoonIcon } from '@chakra-ui/icons';
 import Logo from '../assets/Billi_logo_light.png';
 
-const MotionBox = motion(Box);
 const MotionFlex = motion(Flex);
+const MotionBox = motion(Box);
+
+const AI_PERSONALITIES = {
+  assistant: {
+    description: "Your helpful everyday assistant for general tasks and queries."
+  },
+  technical: {
+    description: "Technical expert for programming and development assistance."
+  },
+  creative: {
+    description: "Creative companion for artistic and imaginative endeavors."
+  },
+  friendly: {
+    description: "Casual conversation partner for friendly chats and discussions."
+  }
+};
 
 const features = [
-  { icon: BiConversation, title: 'Natural Conversations', description: 'Chat naturally with advanced language understanding' },
-  { icon: BiBrain, title: 'Smart Learning', description: 'Adapts to your style and preferences' },
-  { icon: BiAnalyse, title: 'Quick Insights', description: 'Process and analyze complex information' },
-  { icon: BiRocket, title: 'Task Automation', description: 'Automate your daily workflows' },
+  { 
+    icon: BiConversation, 
+    title: 'Natural Conversations', 
+    description: 'Chat naturally with advanced language understanding', 
+    path: '/chat',
+    color: 'blue'
+  },
+  { 
+    icon: BiBrain, 
+    title: 'Smart Learning', 
+    description: 'Adapts to your style and preferences', 
+    path: '/chat/technical',
+    color: 'green'
+  },
+  { 
+    icon: BiAnalyse, 
+    title: 'Quick insights', 
+    description: 'Process and analyze complex information', 
+    path: '/chat/creative',
+    color: 'purple'
+  },
+  { 
+    icon: BiRocket, 
+    title: 'Task Automation', 
+    description: 'Automate your daily workflows', 
+    path: '/chat/friendly',
+    color: 'orange'
+  },
 ];
 
 const BilliBot = () => (
@@ -262,7 +301,7 @@ const LandingPage = () => {
                   bgGradient: "linear(to-r, billi.600, accent.600)",
                 }}
               >
-                Start Chatting with Billi
+                Get Started with Billi
               </Button>
             </MotionBox>
           </VStack>
@@ -276,6 +315,8 @@ const LandingPage = () => {
             {features.map((feature, index) => (
               <MotionBox
                 key={index}
+                as="button"
+                onClick={() => navigate(feature.path)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.2 }}
@@ -283,8 +324,9 @@ const LandingPage = () => {
                 p={8}
                 borderRadius="xl"
                 textAlign="center"
+                _hover={{ transform: 'translateY(-5px)', shadow: 'xl' }}
               >
-                <Icon as={feature.icon} w={12} h={12} color="billi.500" mb={4} />
+                <Icon as={feature.icon} w={12} h={12} color={`${feature.color}.500`} mb={4} />
                 <Heading size="md" mb={4}>{feature.title}</Heading>
                 <Text color={textColor}>{feature.description}</Text>
               </MotionBox>

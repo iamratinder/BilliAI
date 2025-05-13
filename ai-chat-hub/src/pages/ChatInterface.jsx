@@ -23,7 +23,7 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { ChevronLeftIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { chatAPI } from '../services/api';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
@@ -35,24 +35,39 @@ const MotionBox = motion(Box);
 const AI_PERSONALITIES = {
   assistant: {
     name: 'Assistant',
-    color: 'blue'
+    color: 'blue',
+    description: 'General purpose AI assistant',
   },
   creative: {
     name: 'Creative',
-    color: 'purple'
+    color: 'purple',
+    description: 'Creative writing and ideation',
   },
   technical: {
     name: 'Technical',
-    color: 'green'
+    color: 'green',
+    description: 'Technical and coding support',
   },
   friendly: {
     name: 'Friendly',
-    color: 'orange'
+    color: 'orange',
+    description: 'Casual conversation partner',
   }
 };
 
 const Sidebar = ({ selectedAI, setSelectedAI, isMobile, onClose, borderColor }) => {
   const useColorValue = useColorModeValue('white', 'gray.800');
+  const navigate = useNavigate();
+  
+  const handleAISelect = (aiType) => {
+    setSelectedAI(aiType);
+    if (aiType === 'assistant') {
+      navigate('/chat');
+    } else {
+      navigate(`/chat/${aiType}`);
+    }
+    if (isMobile) onClose();
+  };
   
   return (
     <VStack spacing={4} align="stretch" w="full" p={4} bg={useColorValue}>
@@ -60,10 +75,7 @@ const Sidebar = ({ selectedAI, setSelectedAI, isMobile, onClose, borderColor }) 
         <Button
           key={aiType}
           variant={selectedAI === aiType ? 'solid' : 'ghost'}
-          onClick={() => {
-            setSelectedAI(aiType);
-            if (isMobile) onClose();
-          }}
+          onClick={() => handleAISelect(aiType)}
           colorScheme={aiInfo.color}
           w="full"
           justifyContent="flex-start"
@@ -384,7 +396,7 @@ const WelcomeMessage = () => {
   );
 };
 
-const ChatInterface = () => {
+const ChatInterface = ({ aiType = 'assistant', personality }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [selectedAI, setSelectedAI] = useState('assistant');
@@ -405,6 +417,9 @@ const ChatInterface = () => {
   const [lastMessageTime, setLastMessageTime] = useState(0);
   const [messageHistory, setMessageHistory] = useState([]);
 
+  // Add personality-specific styling
+  const personalityColor = personality?.color || 'blue';
+
   // Add this effect to clean up old message history
   useEffect(() => {
     const cleanup = setInterval(() => {
@@ -422,6 +437,18 @@ const ChatInterface = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Add this new effect to handle AI type changes
+  useEffect(() => {
+    if (selectedAI !== aiType) {
+      setSelectedAI(aiType);
+    }
+  }, [aiType]);
+
+  // Add this effect to clear messages when switching AIs
+  useEffect(() => {
+    setMessages([]); // Clear messages when switching AI personalities
+  }, [selectedAI]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -482,6 +509,9 @@ const ChatInterface = () => {
     setInput('');
     resetHeight(); // Reset textarea height after sending
 
+    // Add personality info to the request
+    const currentPersonality = AI_PERSONALITIES[selectedAI];
+
     try {
       setIsLoading(true);
       const response = await chatAPI.sendMessage(input, selectedAI);
@@ -490,7 +520,7 @@ const ChatInterface = () => {
         content: response || 'No response received',
         sender: selectedAI,
         timestamp: new Date().toISOString(),
-        personality: AI_PERSONALITIES[selectedAI]
+        personality: currentPersonality // Include personality info in messages
       };
 
       setMessages((prev) => [...prev, aiMessage]);
@@ -506,6 +536,9 @@ const ChatInterface = () => {
       setIsLoading(false);
     }
   };
+
+  // Get current personality info
+  const currentPersonality = AI_PERSONALITIES[selectedAI];
 
   return (
     <ErrorBoundary fallback={<Text p={4}>Something went wrong. Please try again.</Text>}>
@@ -524,13 +557,15 @@ const ChatInterface = () => {
           zIndex={1}
           boxShadow="sm"
         >
-          <HStack justify="space-between">
+          <Flex justify="space-between" align="center">
+            {/* Left section */}
             <HStack spacing={4}>
               <IconButton
                 icon={<HamburgerIcon />}
                 onClick={isMobile ? onOpen : toggleSidebar}
                 variant="ghost"
                 aria-label="Toggle Sidebar"
+                colorScheme={personalityColor}
                 _hover={{
                   bg: useColorModeValue('blue.100', 'blue.700'),
                   transform: 'scale(1.05)'
@@ -539,6 +574,8 @@ const ChatInterface = () => {
               />
               <BilliLogo navigate={navigate} />
             </HStack>
+
+            {/* Right section */}
             <IconButton
               icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               onClick={toggleColorMode}
@@ -550,7 +587,7 @@ const ChatInterface = () => {
               }}
               transition="all 0.2s"
             />
-          </HStack>
+          </Flex>
         </Box>
 
         <Flex flex={1} overflow="hidden">
@@ -569,7 +606,10 @@ const ChatInterface = () => {
             >
               <Sidebar 
                 selectedAI={selectedAI} 
-                setSelectedAI={setSelectedAI} 
+                setSelectedAI={(newAI) => {
+                  setSelectedAI(newAI);
+                  setMessages([]); // Clear messages when switching personalities
+                }} 
                 isMobile={isMobile} 
                 onClose={onClose} 
                 borderColor={borderColor} 
@@ -596,7 +636,10 @@ const ChatInterface = () => {
                 </HStack>
                 <Sidebar 
                   selectedAI={selectedAI} 
-                  setSelectedAI={setSelectedAI} 
+                  setSelectedAI={(newAI) => {
+                    setSelectedAI(newAI);
+                    setMessages([]); // Clear messages when switching personalities
+                  }} 
                   isMobile={isMobile} 
                   onClose={onClose} 
                   borderColor={borderColor} 
@@ -691,6 +734,26 @@ const ChatInterface = () => {
                       shadow="lg"
                     >
                       <TypingIndicator />
+                    </Box>
+                  </HStack>
+                </MotionBox>
+              )}
+              {messages.length === 0 && personality?.greeting && (
+                <MotionBox
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  alignSelf="flex-start"
+                >
+                  <HStack spacing={2}>
+                    <Avatar size="sm" name={personality.name} bg={`${personalityColor}.500`} />
+                    <Box
+                      bg={useColorModeValue('white', 'gray.700')}
+                      p={4}
+                      borderRadius="lg"
+                      maxW="80%"
+                    >
+                      <Text>{personality.greeting}</Text>
                     </Box>
                   </HStack>
                 </MotionBox>
