@@ -639,7 +639,7 @@ const ChatInterface = ({ aiType = 'assistant', personality }) => {
               as={motion.div}
               initial={{ width: "0px" }}
               animate={{ 
-                width: isSidebarOpen ? "240px" : "0px",
+                width: isSidebarOpen ? "100px" : "0px", // Reduced from 240px
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               borderRight="1px"
@@ -660,9 +660,9 @@ const ChatInterface = ({ aiType = 'assistant', personality }) => {
             </Box>
           )}
 
-          <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
+          <Drawer isOpen={isOpen} placement="left" onClose={onClose} size='xs'>
             <DrawerOverlay />
-            <DrawerContent bg={useColorModeValue('white', 'gray.800')}>
+            <DrawerContent maxWidth="200px" bg={useColorModeValue('white', 'gray.800')}>
               <DrawerBody p={0}>
                 <HStack p={4} borderBottomWidth="1px" borderColor={borderColor}>
                   <IconButton
