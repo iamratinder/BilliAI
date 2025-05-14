@@ -20,9 +20,10 @@ import {
   Textarea,
   useToast,
   Image,
+  Icon,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { ChevronLeftIcon, HamburgerIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
+import { ChevronLeftIcon, HamburgerIcon, SunIcon, MoonIcon, ChatIcon, EditIcon, SettingsIcon, EmailIcon } from '@chakra-ui/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { chatAPI } from '../services/api';
 import ReactMarkdown from 'react-markdown';
@@ -36,27 +37,29 @@ const AI_PERSONALITIES = {
   assistant: {
     name: 'Assistant',
     color: 'blue',
-    description: 'General purpose AI assistant',
+    icon: ChatIcon
   },
   creative: {
     name: 'Creative',
     color: 'purple',
-    description: 'Creative writing and ideation',
+    icon: EditIcon
   },
   technical: {
     name: 'Technical',
     color: 'green',
-    description: 'Technical and coding support',
+    icon: SettingsIcon
   },
   friendly: {
     name: 'Friendly',
     color: 'orange',
-    description: 'Casual conversation partner',
+    icon: EmailIcon
   }
 };
 
 const Sidebar = ({ selectedAI, setSelectedAI, isMobile, onClose, borderColor }) => {
-  const useColorValue = useColorModeValue('white', 'gray.800');
+  const bgColor = useColorModeValue('white', 'gray.800');
+  const buttonBg = useColorModeValue('gray.50', 'gray.700');
+  const selectedBg = useColorModeValue('blue.50', 'rgba(66, 153, 225, 0.15)'); // Customized selected background
   const navigate = useNavigate();
   
   const handleAISelect = (aiType) => {
@@ -70,37 +73,77 @@ const Sidebar = ({ selectedAI, setSelectedAI, isMobile, onClose, borderColor }) 
   };
   
   return (
-    <VStack spacing={4} align="stretch" w="full" p={4} bg={useColorValue}>
-      {Object.entries(AI_PERSONALITIES).map(([aiType, aiInfo]) => (
-        <Button
-          key={aiType}
-          variant={selectedAI === aiType ? 'solid' : 'ghost'}
-          onClick={() => handleAISelect(aiType)}
-          colorScheme={aiInfo.color}
-          w="full"
-          justifyContent="flex-start"
-          px={4}
-          bg={selectedAI === aiType 
-            ? useColorModeValue(`${aiInfo.color}.500`, `${aiInfo.color}.200`)
-            : 'transparent'
-          }
-          color={selectedAI === aiType 
-            ? useColorModeValue('white', 'gray.800')
-            : useColorModeValue('gray.800', 'white')
-          }
-          _hover={{
-            bg: useColorModeValue(
-              selectedAI === aiType ? `${aiInfo.color}.600` : `${aiInfo.color}.50`,
-              selectedAI === aiType ? `${aiInfo.color}.300` : `${aiInfo.color}.700`
-            )
-          }}
-        >
-          <VStack align="start" spacing={0}>
-            <Text>{aiInfo.name}</Text>
-            <Text fontSize="xs" opacity={0.8}>{aiInfo.description}</Text>
-          </VStack>
-        </Button>
-      ))}
+    <VStack spacing={2} align="stretch" w="full" p={3} bg={bgColor}>
+      {Object.entries(AI_PERSONALITIES).map(([aiType, aiInfo]) => {
+        const IconComponent = aiInfo.icon;
+        const isSelected = selectedAI === aiType;
+        
+        return (
+          <Box
+            key={aiType}
+            as={motion.div}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Button
+              variant="ghost"
+              onClick={() => handleAISelect(aiType)}
+              w="full"
+              h="auto"
+              py={2.5}
+              px={3}
+              display="flex"
+              alignItems="flex-start"
+              flexDirection="column"
+              bg={isSelected ? selectedBg : buttonBg}
+              borderLeft={isSelected ? "4px" : "4px"}
+              borderLeftColor={isSelected ? `${aiInfo.color}.500` : "transparent"}
+              _hover={{
+                bg: useColorModeValue(
+                  `${aiInfo.color}.50`,
+                  `${aiInfo.color}.900`
+                ),
+              }}
+              _dark={{
+                bg: isSelected ? selectedBg : 'gray.700',
+                color: 'white',
+              }}
+              transition="all 0.2s"
+            >
+              <HStack w="full" mb={0.5}>
+                <Icon
+                  as={IconComponent}
+                  color={isSelected 
+                    ? useColorModeValue(`${aiInfo.color}.500`, `${aiInfo.color}.200`)
+                    : useColorModeValue('gray.500', 'gray.400')
+                  }
+                  boxSize={4}
+                />
+                <Text
+                  fontWeight={isSelected ? "bold" : "medium"}
+                  color={useColorModeValue(
+                    isSelected ? `${aiInfo.color}.700` : 'gray.700',
+                    isSelected ? `${aiInfo.color}.200` : 'gray.100'
+                  )}
+                >
+                  {aiInfo.name}
+                </Text>
+              </HStack>
+              <Text
+                fontSize="xs"
+                color={useColorModeValue(
+                  isSelected ? `${aiInfo.color}.600` : 'gray.500',
+                  isSelected ? `${aiInfo.color}.300` : 'gray.400'
+                )}
+                noOfLines={2}
+                pl={7}
+              >
+                {aiInfo.shortDesc}
+              </Text>
+            </Button>
+          </Box>
+        );
+      })}
     </VStack>
   );
 };

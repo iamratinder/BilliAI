@@ -136,51 +136,118 @@ const About = () => {
             </Text>
             
             <MotionGrid 
-              templateColumns={{ base: '1fr', md: 'repeat(2, 1fr)' }} 
+              templateColumns="1fr"
               gap={8} 
               w="full"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              {['Technology Stack', 'Features'].map((title, index) => (
-                <MotionBox
-                  key={title}
-                  p={6}
-                  bg={cardBg}
-                  borderRadius="xl"
-                  boxShadow="md"
-                  _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
-                  transition="all 0.3s"
-                  initial={{ opacity: 0, x: index === 0 ? -20 : 20 }}
-                  animate={{ opacity: 1, x: 0 }}
+              <MotionBox
+                p={6}
+                bg={cardBg}
+                borderRadius="xl"
+                boxShadow="md"
+                _hover={{ transform: 'translateY(-5px)', boxShadow: 'xl' }}
+                transition="all 0.3s"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <Heading 
+                  size="md" 
+                  mb={6}
+                  bgGradient="linear(to-r, blue.400, purple.500)"
+                  bgClip="text"
                 >
-                  <Heading 
-                    size="md" 
-                    mb={4}
-                    bgGradient="linear(to-r, blue.400, purple.500)"
-                    bgClip="text"
-                  >
-                    {title}
-                  </Heading>
-                  <VStack align="start" spacing={2}>
-                    {title === 'Technology Stack' ? (
-                      ['React & Vite', 'Chakra UI', 'Framer Motion', 'Advanced AI Models']
-                    ) : (
-                      ['Natural Language Processing', 'Real-time Conversations', 'Code Highlighting', 'Dark/Light Mode']
-                    ).map(item => (
-                      <Text 
-                        key={item} 
-                        color={textColor}
-                        _hover={{ color: 'blue.400', transform: 'translateX(5px)' }}
-                        transition="all 0.2s"
+                  Key Features
+                </Heading>
+                <Grid 
+                  templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+                  gap={6}
+                >
+                  {[
+                    {
+                      title: "Smart Conversations",
+                      items: [
+                        "Natural Language Understanding",
+                        "Context-Aware Responses",
+                        "Multi-Turn Conversations",
+                        "Personalized Interactions"
+                      ]
+                    },
+                    {
+                      title: "Developer Tools",
+                      items: [
+                        "Code Syntax Highlighting",
+                        "Multiple Programming Languages",
+                        "Technical Documentation",
+                        "Debug Assistance"
+                      ]
+                    },
+                    {
+                      title: "User Experience",
+                      items: [
+                        "Intuitive Interface",
+                        "Real-Time Responses",
+                        "Dark/Light Theme",
+                        "Mobile Responsive"
+                      ]
+                    },
+                    {
+                      title: "Advanced Capabilities",
+                      items: [
+                        "Text Generation",
+                        "Problem Solving",
+                        "Creative Writing",
+                        "Knowledge Base"
+                      ]
+                    }
+                  ].map((category, idx) => (
+                    <VStack
+                      key={category.title}
+                      align="start"
+                      p={4}
+                      bg={useColorModeValue('gray.50', 'gray.700')}
+                      borderRadius="lg"
+                      spacing={3}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                    >
+                      <Text
+                        fontWeight="bold"
+                        color={useColorModeValue('blue.600', 'blue.200')}
                       >
-                        • {item}
+                        {category.title}
                       </Text>
-                    ))}
-                  </VStack>
-                </MotionBox>
-              ))}
+                      {category.items.map(item => (
+                        <Text
+                          key={item}
+                          color={textColor}
+                          fontSize="sm"
+                          display="flex"
+                          alignItems="center"
+                          _hover={{
+                            color: 'blue.400',
+                            transform: 'translateX(5px)'
+                          }}
+                          transition="all 0.2s"
+                        >
+                          <Box
+                            as="span"
+                            w="2px"
+                            h="2px"
+                            bg="blue.400"
+                            borderRadius="full"
+                            mr={2}
+                          />
+                          {item}
+                        </Text>
+                      ))}
+                    </VStack>
+                  ))}
+                </Grid>
+              </MotionBox>
             </MotionGrid>
           </VStack>
 
