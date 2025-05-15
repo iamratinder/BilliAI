@@ -639,7 +639,7 @@ const ChatInterface = ({ aiType = 'assistant', personality }) => {
               as={motion.div}
               initial={{ width: "0px" }}
               animate={{ 
-                width: isSidebarOpen ? "100px" : "0px", // Reduced from 240px
+                width: isSidebarOpen ? "230px" : "0px", // Reduced from 230px
               }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
               borderRight="1px"
